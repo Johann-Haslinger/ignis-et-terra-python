@@ -17,11 +17,12 @@ class Game:
     
     while run:
       for event in pygame.event.get():
-        if event.type == pygame.QUIT: run = False
+        if event.type == pygame.QUIT: 
+          run = False
         
-        deltaTime = self.clock.tick(FPS)
-        self.level.run(deltaTime)
-        pygame.display.update()
+      deltaTime = self.clock.tick(FPS) / 1000
+      self.level.run(deltaTime)
+      pygame.display.update()
         
     pygame.quit()
     sys.exit()
