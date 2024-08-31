@@ -2,7 +2,7 @@ import pygame, sys
 from level import Level
 from settings import *
 
-FPS = 60
+
 
 class Game:
   def __init__(self):
