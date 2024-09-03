@@ -3,14 +3,14 @@ from settings import *
 from player import Player
 from sprites import Generic
 from pytmx.util_pygame import load_pygame
+from quick_inventory import QuickInventory
+from inventory import Inventory
 
 class Level:
   def __init__(self):
-    
-    # get the display surface
+
     self.display_surface = pygame.display.get_surface()
-    
-    # sprite groups
+
     self.all_sprites = LayeredSpritesGroup()
     self.collision_sprites = pygame.sprite.Group()
     
@@ -22,29 +22,23 @@ class Level:
     tmx_data = load_pygame('data/map.tmx')
     
     for x, y, surf in tmx_data.get_layer_by_name('Collision').tiles():
-      # iso_x = (x - y) * (TILE_SIZE // 2) + (1520 )/ 2
-      # iso_y = (x + y) * (TILE_SIZE // 4) - (240 +60 )/ 2
       iso_x = (x - y) * (TILE_SIZE // 2) + 1440 / 2
       iso_y = (x + y) * (TILE_SIZE // 4) - 400 / 2
-   
-      
-
       
       new_width = int(surf.get_width() * 2.5)
       new_height = int(surf.get_height() * 2.5)
       scaled_surf = pygame.transform.scale(surf, (new_width, new_height))
 
       Generic((iso_x, iso_y), scaled_surf, self.collision_sprites)
-      # Generic((iso_x, iso_y), scaled_surf, self.all_sprites)
-
-			
-
     
+    self.inventory = Inventory()
     self.player = Player(
       pos = (PLAYER_START_X, PLAYER_START_Y),
       group = self.all_sprites, 
       collision_sprites=self.collision_sprites 
     )
+    
+    self.quick_inventory = QuickInventory()
     
     Generic(
 			pos = (0,0),
@@ -58,6 +52,8 @@ class Level:
     self.display_surface.fill('black')
     self.all_sprites.custom_draw(self.player)
     self.all_sprites.update(dt)
+    self.quick_inventory.update(self.player, self.display_surface)
+    self.inventory.update(self.player, self.display_surface)
     
 	  
 

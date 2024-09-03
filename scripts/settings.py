@@ -1,4 +1,4 @@
-from enum import Enum, auto
+from enum import Enum
 
 
 SCREEN_WIDTH = 1280
@@ -30,3 +30,7 @@ class ANIMATION(Enum):
     LEFT_IDLE = "left_idle"
     RIGHT_IDLE = "right_idle"
     
+class ItemName(Enum):
+    HOE = "hoe"
+    AXE = "axe"
+    APPLE = "apple"
