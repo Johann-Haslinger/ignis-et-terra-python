@@ -18,8 +18,8 @@ class Player(pygame.sprite.Sprite):
         self.rect = self.image.get_rect(center=pos)
         self.z = LAYERS['main']
 
-        # timers
-        self.timers = {
+        # cooldowns
+        self.cooldowns = {
             'tool switch': Cooldown(200)
         }
 
@@ -32,10 +32,9 @@ class Player(pygame.sprite.Sprite):
         self.hitbox = self.rect.copy().inflate((-126, -70))
         self.collision_sprites = collision_sprites
 
-        # inventory
         self.items = [
             Item("apple", 2),
-            Item("hoe", True),
+            Item("hoe", 1, True),
             Item("axe", 1),
         ]
 
@@ -78,14 +77,14 @@ class Player(pygame.sprite.Sprite):
             self.direction.y = - 0.5
             self.status = ANIMATION.RIGHT
 
-        elif keys[pygame.K_LEFT] and not self.timers['tool switch'].active:
+        elif keys[pygame.K_LEFT] and not self.cooldowns['tool switch'].active:
 
-            self.timers['tool switch'].activate()
+            self.cooldowns['tool switch'].activate()
             self.handle_change_tool_click('previous')
 
-        elif keys[pygame.K_RIGHT] and not self.timers['tool switch'].active:
+        elif keys[pygame.K_RIGHT] and not self.cooldowns['tool switch'].active:
 
-            self.timers['tool switch'].activate()
+            self.cooldowns['tool switch'].activate()
             self.handle_change_tool_click('next')
 
         else:
@@ -115,9 +114,9 @@ class Player(pygame.sprite.Sprite):
 
         self.image = self.animations[self.status][int(self.frame_index)]
 
-    def update_timers(self):
-        for timer in self.timers.values():
-            timer.update()
+    def update_cooldowns(self):
+        for cooldown in self.cooldowns.values():
+            cooldown.update()
 
     def collision(self, direction):
 
@@ -125,18 +124,18 @@ class Player(pygame.sprite.Sprite):
             if hasattr(sprite, 'hitbox'):
                 if sprite.hitbox.colliderect(self.hitbox):
                     if direction == 'horizontal':
-                        if self.direction.x > 0:  # moving right
+                        if self.direction.x > 0:  
                             self.hitbox.right = sprite.hitbox.left
-                        if self.direction.x < 0:  # moving left
+                        if self.direction.x < 0: 
                             self.hitbox.left = sprite.hitbox.right
 
                         self.rect.centerx = self.hitbox.centerx
                         self.position.x = self.hitbox.centerx
 
                     if direction == 'vertical':
-                        if self.direction.y > 0:  # moving down
+                        if self.direction.y > 0: 
                             self.hitbox.bottom = sprite.hitbox.top
-                        if self.direction.y < 0:  # moving up
+                        if self.direction.y < 0: 
                             self.hitbox.top = sprite.hitbox.bottom
 
                         self.rect.centery = self.hitbox.centery
@@ -167,4 +166,4 @@ class Player(pygame.sprite.Sprite):
         self.get_status()
         self.move(dt)
         self.animate(dt)
-        self.update_timers()
+        self.update_cooldowns()
